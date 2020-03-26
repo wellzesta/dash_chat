@@ -4,7 +4,6 @@ class ChatInputToolbar extends StatelessWidget {
   final TextEditingController controller;
   final TextStyle inputTextStyle;
   final InputDecoration inputDecoration;
-  final TextCapitalization textCapitalization;
   final BoxDecoration inputContainerStyle;
   final List<Widget> leading;
   final List<Widget> trailling;
@@ -37,7 +36,6 @@ class ChatInputToolbar extends StatelessWidget {
     this.leading = const [],
     this.trailling = const [],
     this.inputDecoration,
-    this.textCapitalization,
     this.inputTextStyle,
     this.inputContainerStyle,
     this.inputMaxLines = 1,
@@ -65,91 +63,115 @@ class ChatInputToolbar extends StatelessWidget {
       createdAt: DateTime.now(),
     );
 
-    return Container(
-      padding: inputToolbarPadding,
-      margin: inputToolbarMargin,
-      decoration: inputContainerStyle != null
-          ? inputContainerStyle
-          : BoxDecoration(color: Colors.white),
-      child: Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              ...leading,
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: TextField(
-                    focusNode: focusNode,
-                    onChanged: (value) {
-                      onTextChange(value);
-                    },
-                    buildCounter: (
-                      BuildContext context, {
-                      int currentLength,
-                      int maxLength,
-                      bool isFocused,
-                    }) =>
-                        null,
-                    decoration: inputDecoration != null
-                        ? inputDecoration
-                        : InputDecoration.collapsed(
-                            hintText: "",
-                            fillColor: Colors.white,
+    return SafeArea(
+      child: Container(
+        padding: inputToolbarPadding,
+        margin: inputToolbarMargin,
+        decoration: inputContainerStyle != null ? inputContainerStyle : BoxDecoration(color: Colors.transparent),
+        child: Column(
+          children: <Widget>[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: Container(
+                color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    ...leading,
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Container(
+                          height: 64,
+                          color: Colors.white,
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 6.0, left: 8, right: 4),
+                              child: TextField(
+                                focusNode: focusNode,
+                                onChanged: (value) {
+                                  onTextChange(value);
+                                  SchedulerBinding.instance.addPostFrameCallback((_) {
+                                    scrollController.jumpTo(scrollController.position.maxScrollExtent - 10);
+                                  });
+                                },
+                                buildCounter: (
+                                  BuildContext context, {
+                                  int currentLength,
+                                  int maxLength,
+                                  bool isFocused,
+                                }) =>
+                                    null,
+                                decoration: inputDecoration != null
+                                    ? inputDecoration
+                                    : InputDecoration.collapsed(
+                                        hintText: "",
+                                        fillColor: Colors.white,
+                                      ),
+                                controller: controller,
+                                style: inputTextStyle,
+//                                onSubmitted: (text) async {
+//                                  //FocusScope.of(context).unfocus();
+//                                  focusNode.unfocus();
+//
+//                                  await onSend(message);
+//
+//                                  controller.text = "";
+//
+//                                  //Timer(Duration(milliseconds: 700), () {
+//                                  Timer(Duration(milliseconds: 700), () {
+//                                    scrollController.animateTo(
+//                                      scrollController.position.maxScrollExtent + 38,
+//                                      curve: Curves.easeOut,
+//                                      duration: const Duration(milliseconds: 500),
+//                                    );
+//                                  });
+//                                },
+                                textInputAction: TextInputAction.newline,
+                                maxLength: maxInputLength,
+                                minLines: 1,
+                                maxLines: inputMaxLines,
+                                showCursor: showInputCursor,
+                                cursorColor: inputCursorColor,
+                                cursorWidth: inputCursorWidth,
+                              ),
+                            ),
                           ),
-                    textCapitalization: textCapitalization,
-                    controller: controller,
-                    style: inputTextStyle,
-                    maxLength: maxInputLength,
-                    minLines: 1,
-                    maxLines: inputMaxLines,
-                    showCursor: showInputCursor,
-                    cursorColor: inputCursorColor,
-                    cursorWidth: inputCursorWidth,
-                  ),
+                        ),
+                      ),
+                    ),
+                    if (showTraillingBeforeSend) ...trailling,
+                    sendButtonBuilder(() async {
+                      if (controller.text != '') await onSend(message);
+
+                      //focusNode.unfocus();
+                      controller.text = "";
+
+//                      SchedulerBinding.instance.addPostFrameCallback((_) {
+//                        scrollController.animateTo(
+//                          scrollController.position.maxScrollExtent,
+//                          curve: Curves.easeOut,
+//                          duration: const Duration(milliseconds: 500),
+//                        );
+//                      });
+
+                      Timer(Duration(milliseconds: 500), () {
+                        scrollController.animateTo(
+                          scrollController.position.maxScrollExtent - 10,
+                          curve: Curves.easeOut,
+                          duration: const Duration(milliseconds: 300),
+                        );
+                      });
+                    }),
+                    if (!showTraillingBeforeSend) ...trailling,
+                  ],
                 ),
               ),
-              if (showTraillingBeforeSend) ...trailling,
-              if (sendButtonBuilder != null)
-                sendButtonBuilder(() async {
-                  if (text.length != 0) {
-                    await onSend(message);
-
-                    controller.text = "";
-
-                    onTextChange("");
-                  }
-                })
-              else
-                IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: alwaysShowSend || text.length != 0
-                      ? () async {
-                          if (text.length != 0) {
-                            await onSend(message);
-
-                            controller.text = "";
-
-                            onTextChange("");
-
-                            Timer(Duration(milliseconds: 700), () {
-                              scrollController.animateTo(
-                                scrollController.position.maxScrollExtent,
-                                curve: Curves.easeOut,
-                                duration: const Duration(milliseconds: 300),
-                              );
-                            });
-                          }
-                        }
-                      : null,
-                ),
-              if (!showTraillingBeforeSend) ...trailling,
-            ],
-          ),
-          if (inputFooterBuilder != null) inputFooterBuilder()
-        ],
+            ),
+            if (inputFooterBuilder != null) inputFooterBuilder()
+          ],
+        ),
       ),
     );
   }

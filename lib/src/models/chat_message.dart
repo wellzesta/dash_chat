@@ -17,6 +17,9 @@ class ChatMessage {
   /// message was delivered takes a [DateTime] object.
   DateTime createdAt;
 
+  DateTime originalCreatedAt;
+  DateTime messageTime = DateTime.now();
+
   /// Takes a [ChatUser] object which is used to distinguish between
   /// users and also provide avaatar URLs and name.
   ChatUser user;
@@ -27,40 +30,42 @@ class ChatMessage {
 
   /// A [non-optional] parameter which is used to display vedio
   /// takes a [Sring] as a url
-  String video;
+  String vedio;
 
   /// A [non-optional] parameter which is used to show quick replies
   /// to the user
   QuickReplies quickReplies;
 
-  ChatMessage({
-    String id,
-    @required this.text,
-    @required this.user,
-    this.image,
-    this.video,
-    this.quickReplies,
-    String Function() messageIdGenerator,
-    DateTime createdAt,
-  }) {
-    this.createdAt = createdAt != null ? createdAt : DateTime.now();
-    this.id = id != null
-        ? id
-        : messageIdGenerator != null
-            ? messageIdGenerator()
-            : Uuid().v4().toString();
+  bool deleted;
+
+  bool blocked;
+
+  ChatMessage(
+      {String id,
+      @required this.text,
+      @required this.user,
+      this.image,
+      this.vedio,
+      this.quickReplies,
+      String Function() messageIdGenerator,
+      DateTime createdAt,
+      DateTime originalCreatedAt,
+      this.deleted = false,
+      this.blocked = false}) {
+    this.createdAt = createdAt ?? DateTime.now();
+    this.originalCreatedAt = originalCreatedAt ?? this.createdAt;
+    this.id =
+        id != null ? id : messageIdGenerator != null ? messageIdGenerator() : Uuid().v4().toString();
   }
 
   ChatMessage.fromJson(Map<dynamic, dynamic> json) {
     id = json['id'];
     text = json['text'];
     image = json['image'];
-    video = json['video'] ?? json['vedio'];
+    vedio = json['vedio'];
     createdAt = DateTime.fromMillisecondsSinceEpoch(json['createdAt']);
     user = ChatUser.fromJson(json['user']);
-    quickReplies = json['quickReplies'] != null
-        ? QuickReplies.fromJson(json['quickReplies'])
-        : null;
+    quickReplies = json['quickReplies'] != null ? QuickReplies.fromJson(json['quickReplies']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -70,14 +75,12 @@ class ChatMessage {
       data['id'] = this.id;
       data['text'] = this.text;
       data['image'] = this.image;
-      data['video'] = this.video;
+      data['vedio'] = this.vedio;
       data['createdAt'] = this.createdAt.millisecondsSinceEpoch;
       data['user'] = user.toJson();
-      data['quickReplies'] = quickReplies?.toJson();
-    } catch (e, stack) {
-      print('ERROR caught when trying to convert ChatMessage to JSON:');
-      print(e);
-      print(stack);
+      data['quickReplies'] = quickReplies.toJson();
+    } catch (e) {
+      print('Error: $e');
     }
     return data;
   }

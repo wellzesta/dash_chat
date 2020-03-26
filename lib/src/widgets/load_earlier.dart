@@ -26,17 +26,14 @@ class LoadEarlierWidget extends StatelessWidget {
           horizontal: 12.0,
           vertical: 5.0,
         ),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20.0),
-            boxShadow: [
-              BoxShadow(
-                spreadRadius: 1.0,
-                blurRadius: 5.0,
-                color: Color.fromRGBO(0, 0, 0, 0.2),
-                offset: Offset(0, 10),
-              )
-            ]),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20.0), boxShadow: [
+          BoxShadow(
+            spreadRadius: 1.0,
+            blurRadius: 5.0,
+            color: Color.fromRGBO(0, 0, 0, 0.2),
+            offset: Offset(0, 10),
+          )
+        ]),
         child: Text(
           "Load Earlier Messages",
           style: TextStyle(

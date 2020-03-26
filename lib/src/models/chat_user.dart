@@ -19,13 +19,9 @@ class ChatUser {
   /// An [optional] parameter to set The Message bubble Color
   Color containerColor;
 
-  ChatUser({
-    String uid,
-    this.name,
-    this.avatar,
-    this.containerColor,
-    this.color,
-  }) {
+  bool isStaff;
+
+  ChatUser({String uid, this.name, this.avatar, this.containerColor, this.color, this.isStaff = false}) {
     this.uid = uid != null ? uid : Uuid().v4().toString();
   }
 

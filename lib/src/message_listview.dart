@@ -10,7 +10,7 @@ class MessageListView extends StatefulWidget {
   final Function(ChatUser) onPressAvatar;
   final Function(ChatUser) onLongPressAvatar;
   final bool renderAvatarOnTop;
-  final Function(ChatMessage) onLongPressMessage;
+  final Function(ChatMessage, BuildContext) onLongPressMessage;
   final bool inverted;
   final Widget Function(ChatUser) avatarBuilder;
   final Widget Function(ChatMessage) messageBuilder;
@@ -36,8 +36,7 @@ class MessageListView extends StatefulWidget {
     this.shouldShowLoadEarlier,
     this.onLoadEarlier,
     this.defaultLoadCallback,
-    this.messageContainerPadding =
-        const EdgeInsets.only(top: 10.0, right: 10.0, left: 10.0),
+    this.messageContainerPadding = const EdgeInsets.only(top: 10.0, right: 10.0, left: 10.0),
     this.scrollController,
     this.parsePatterns = const [],
     this.messageContainerDecoration,
@@ -76,8 +75,7 @@ class _MessageListViewState extends State<MessageListView> {
       previousPixelPostion = scrollNotification.metrics.maxScrollExtent;
     }
 
-    if (scrollNotification.metrics.pixels ==
-        scrollNotification.metrics.maxScrollExtent) {
+    if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent) {
       if (widget.visible) {
         widget.changeVisible(false);
       }
@@ -110,218 +108,126 @@ class _MessageListViewState extends State<MessageListView> {
               children: [
                 ListView.builder(
                   controller: widget.scrollController,
+                  physics: ClampingScrollPhysics(),
                   shrinkWrap: true,
+                  //padding: EdgeInsets.only(bottom: 20),
+                  padding: EdgeInsets.only(bottom: 10),
                   reverse: widget.inverted,
                   itemCount: widget.messages.length,
                   itemBuilder: (context, i) {
-                    final j = i + 1;
-                    bool showAvatar = false;
-                    bool first = false;
-                    bool last = false;
+//                    final j = i + 1;
+//                    bool showAvatar = false;
                     bool showDate;
-                    if (j < widget.messages.length) {
-                      showAvatar = widget.messages[j].user.uid !=
-                          widget.messages[i].user.uid;
-                    } else {
-                      showAvatar = true;
-                    }
-
-                    if (widget.messages.length == 0) {
-                      first = true;
-                    } else if (widget.messages.length - 1 == i) {
-                      last = true;
-                    }
+//                    if (j < widget.messages.length) {
+//                      showAvatar = widget.messages[j].user.uid != widget.messages[i].user.uid;
+//                    } else {
+//                      showAvatar = true;
+//                    }
 
                     if (currentDate == null) {
                       currentDate = widget.messages[i].createdAt;
                       showDate = true;
-                    } else if (currentDate
-                            .difference(widget.messages[i].createdAt)
-                            .inDays !=
-                        0) {
+                    } else if (currentDate.difference(widget.messages[i].createdAt).inDays != 0) {
                       showDate = true;
                       currentDate = widget.messages[i].createdAt;
                     } else {
                       showDate = false;
                     }
 
-                    return Align(
-                      child: Column(
-                        children: <Widget>[
-                          if (showDate)
-                            if (widget.dateBuilder != null)
-                              widget.dateBuilder(widget.dateBuilder != null
-                                  ? widget.dateFormat
-                                      .format(widget.messages[i].createdAt)
-                                  : DateFormat('yyyy-MM-dd')
-                                      .format(widget.messages[i].createdAt))
-                            else
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.grey,
-                                    borderRadius: BorderRadius.circular(10.0)),
-                                padding: EdgeInsets.only(
-                                  bottom: 5.0,
-                                  top: 5.0,
-                                  left: 10.0,
-                                  right: 10.0,
-                                ),
-                                margin: EdgeInsets.symmetric(vertical: 10.0),
-                                child: Text(
-                                  widget.dateFormat != null
-                                      ? widget.dateFormat
-                                          .format(widget.messages[i].createdAt)
-                                      : DateFormat('MMM dd')
-                                          .format(widget.messages[i].createdAt),
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12.0,
-                                  ),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        if (showDate)
+                          if (widget.dateBuilder != null)
+                            widget.dateBuilder(widget.dateBuilder != null
+                                ? widget.dateFormat.format(widget.messages[i].createdAt)
+                                : DateFormat('yyyy-MM-dd').format(widget.messages[i].createdAt))
+                          else
+                            Container(
+                              decoration: BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.circular(10.0)),
+                              padding: EdgeInsets.only(
+                                bottom: 5.0,
+                                top: 5.0,
+                                left: 10.0,
+                                right: 10.0,
+                              ),
+                              margin: EdgeInsets.symmetric(vertical: 10.0),
+                              child: Text(
+                                widget.dateBuilder != null
+                                    ? widget.dateFormat.format(widget.messages[i].createdAt)
+                                    : DateFormat('MMM dd').format(widget.messages[i].createdAt),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12.0,
                                 ),
                               ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: first ? 10.0 : 0.0,
-                              bottom: last ? 10.0 : 0.0,
                             ),
-                            child: Row(
-                              mainAxisAlignment:
-                                  widget.messages[i].user.uid == widget.user.uid
-                                      ? MainAxisAlignment.end
-                                      : MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        MediaQuery.of(context).size.width *
-                                            0.02,
-                                  ),
-                                  child: ((widget.showAvatarForEverMessage ||
-                                              showAvatar) &&
-                                          widget.messages[i].user.uid !=
-                                              widget.user.uid)
-                                      ? AvatarContainer(
-                                          user: widget.messages[i].user,
-                                          onPress: widget.onPressAvatar,
-                                          onLongPress: widget.onLongPressAvatar,
-                                          avatarBuilder: widget.avatarBuilder,
-                                        )
-                                      : SizedBox(
-                                          width: widget.messages[i].user.uid !=
-                                                  widget.user.uid
-                                              ? MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.08
-                                              : 0.0,
-                                        ),
+                        GestureDetector(
+                          onLongPress: () {
+                            if (widget.onLongPressMessage == null) return;
+
+                            widget.onLongPressMessage(widget.messages[i], context);
+//                            if (widget.onLongPressMessage != null) {
+//                              widget.onLongPressMessage(widget.messages[i]);
+//                            } else {
+//                            showBottomSheet(
+//                                context: context,
+//                                builder: (context) => Container(
+//                                      child: Column(
+//                                        mainAxisSize: MainAxisSize.min,
+//                                        children: <Widget>[
+//                                          ListTile(
+//                                            leading: Icon(Icons.delete),
+//                                            title: Text("Delete Message"), // TODO move to localization
+//                                            onTap: () {
+//                                              //Clipboard.setData(ClipboardData(text: widget.messages[i].text));
+//                                              widget.onLongPressMessage(widget.messages[i]);
+//                                              Navigator.pop(context);
+//                                            },
+//                                          ),
+//                                          ListTile(
+//                                            leading: Icon(Icons.cancel),
+//                                            title: Text("Cancel"), // TODO move to localization
+//                                            onTap: () {
+//                                              //Clipboard.setData(ClipboardData(text: widget.messages[i].text));
+//                                              if (widget.onLongPressMessage != null) {
+//                                                widget.onLongPressMessage(widget.messages[i]);
+//                                              }
+//                                              Navigator.pop(context);
+//                                            },
+//                                          )
+//                                        ],
+//                                      ),
+//                                    ));
+                            // }
+                          },
+                          child: widget.messageBuilder != null
+                              ? widget.messageBuilder(widget.messages[i])
+                              : MessageContainer(
+                                  isUser: widget.messages[i].user.uid == widget.user.uid,
+                                  message: widget.messages[i],
+                                  timeFormat: widget.timeFormat,
+                                  messageImageBuilder: widget.messageImageBuilder,
+                                  messageTextBuilder: widget.messageTextBuilder,
+                                  messageTimeBuilder: widget.messageTimeBuilder,
+                                  messageContainerDecoration: widget.messageContainerDecoration,
+                                  parsePatterns: widget.parsePatterns,
                                 ),
-                                GestureDetector(
-                                  onLongPress: () {
-                                    if (widget.onLongPressMessage != null) {
-                                      widget.onLongPressMessage(
-                                          widget.messages[i]);
-                                    } else {
-                                      showBottomSheet(
-                                          context: context,
-                                          builder: (context) => Container(
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: <Widget>[
-                                                    ListTile(
-                                                      leading: Icon(
-                                                          Icons.content_copy),
-                                                      title: Text(
-                                                          "Copy to clipboard"),
-                                                      onTap: () {
-                                                        Clipboard.setData(
-                                                            ClipboardData(
-                                                                text: widget
-                                                                    .messages[i]
-                                                                    .text));
-                                                        Navigator.pop(context);
-                                                      },
-                                                    )
-                                                  ],
-                                                ),
-                                              ));
-                                    }
-                                  },
-                                  child: widget.messageBuilder != null
-                                      ? widget
-                                          .messageBuilder(widget.messages[i])
-                                      : MessageContainer(
-                                          isUser: widget.messages[i].user.uid ==
-                                              widget.user.uid,
-                                          message: widget.messages[i],
-                                          timeFormat: widget.timeFormat,
-                                          messageImageBuilder:
-                                              widget.messageImageBuilder,
-                                          messageTextBuilder:
-                                              widget.messageTextBuilder,
-                                          messageTimeBuilder:
-                                              widget.messageTimeBuilder,
-                                          messageContainerDecoration:
-                                              widget.messageContainerDecoration,
-                                          parsePatterns: widget.parsePatterns,
-                                        ),
-                                ),
-                                if (widget.showuserAvatar)
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal:
-                                          MediaQuery.of(context).size.width *
-                                              0.02,
-                                    ),
-                                    child: ((widget.showAvatarForEverMessage ||
-                                                showAvatar) &&
-                                            widget.messages[i].user.uid ==
-                                                widget.user.uid)
-                                        ? AvatarContainer(
-                                            user: widget.messages[i].user,
-                                            onPress: widget.onPressAvatar,
-                                            onLongPress:
-                                                widget.onLongPressAvatar,
-                                            avatarBuilder: widget.avatarBuilder,
-                                          )
-                                        : SizedBox(
-                                            width:
-                                                widget.messages[i].user.uid ==
-                                                        widget.user.uid
-                                                    ? MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        0.08
-                                                    : 0.0,
-                                          ),
-                                  )
-                                else
-                                  SizedBox(
-                                    width: 10.0,
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     );
                   },
                 ),
-                Container(
-                  height: 100.0,
-                ),
-                AnimatedPositioned(
-                  top: widget.showLoadMore ? 8.0 : -50.0,
-                  duration: Duration(milliseconds: 200),
-                  child: widget.showLoadEarlierWidget != null
-                      ? widget.showLoadEarlierWidget()
-                      : LoadEarlierWidget(
-                          onLoadEarlier: widget.onLoadEarlier,
-                          defaultLoadCallback: widget.defaultLoadCallback,
-                        ),
-                ),
+//                AnimatedPositioned(
+//                  top: widget.showLoadMore ? 8.0 : -50.0,
+//                  duration: Duration(milliseconds: 200),
+//                  child: widget.showLoadEarlierWidget != null
+//                      ? widget.showLoadEarlierWidget()
+//                      : LoadEarlierWidget(
+//                          onLoadEarlier: widget.onLoadEarlier,
+//                          defaultLoadCallback: widget.defaultLoadCallback,
+//                        ),
+//                ),
               ],
             ),
           ),

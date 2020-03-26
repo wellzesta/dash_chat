@@ -28,18 +28,15 @@ class QuickReply extends StatelessWidget {
       child: quickReplyBuilder != null
           ? quickReplyBuilder(reply)
           : Container(
-              margin: EdgeInsets.only(
-                  left: 5.0, right: 5.0, top: 5.0, bottom: 10.0),
+              margin: EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0, bottom: 10.0),
               padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
               decoration: quickReplyStyle != null
                   ? quickReplyStyle
                   : BoxDecoration(
-                      border: Border.all(
-                          width: 1.0, color: Theme.of(context).accentColor),
+                      border: Border.all(width: 1.0, color: Theme.of(context).accentColor),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
-              constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width / 3),
+              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width / 3),
               child: Text(
                 reply.title,
                 style: quickReplyTextStyle != null

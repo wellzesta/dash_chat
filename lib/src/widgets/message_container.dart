@@ -60,16 +60,12 @@ class MessageContainer extends StatelessWidget {
       child: Container(
         decoration: messageContainerDecoration != null
             ? messageContainerDecoration.copyWith(
-                color: message.user.containerColor != null
-                    ? message.user.containerColor
-                    : messageContainerDecoration.color,
+                color: message.user.containerColor != null ? message.user.containerColor : messageContainerDecoration.color,
               )
             : BoxDecoration(
                 color: message.user.containerColor != null
                     ? message.user.containerColor
-                    : isUser
-                        ? Theme.of(context).accentColor
-                        : Color.fromRGBO(225, 225, 225, 1),
+                    : isUser ? Theme.of(context).accentColor : Color.fromRGBO(225, 225, 225, 1),
                 borderRadius: BorderRadius.circular(5.0),
               ),
         margin: EdgeInsets.only(
@@ -87,9 +83,7 @@ class MessageContainer extends StatelessWidget {
                 parse: parsePatterns,
                 text: message.text,
                 style: TextStyle(
-                  color: message.user.color != null
-                      ? message.user.color
-                      : isUser ? Colors.white70 : Colors.black87,
+                  color: message.user.color != null ? message.user.color : isUser ? Colors.white70 : Colors.black87,
                 ),
               ),
             if (message.image != null)
@@ -108,22 +102,16 @@ class MessageContainer extends StatelessWidget {
                 ),
             if (messageTimeBuilder != null)
               messageTimeBuilder(
-                timeFormat != null
-                    ? timeFormat.format(message.createdAt)
-                    : DateFormat('HH:mm:ss').format(message.createdAt),
+                timeFormat != null ? timeFormat.format(message.createdAt) : DateFormat('HH:mm:ss').format(message.createdAt),
               )
             else
               Padding(
                 padding: EdgeInsets.only(top: 5.0),
                 child: Text(
-                  timeFormat != null
-                      ? timeFormat.format(message.createdAt)
-                      : DateFormat('HH:mm:ss').format(message.createdAt),
+                  timeFormat != null ? timeFormat.format(message.createdAt) : DateFormat('HH:mm:ss').format(message.createdAt),
                   style: TextStyle(
                     fontSize: 10.0,
-                    color: message.user.color != null
-                        ? message.user.color
-                        : isUser ? Colors.white70 : Colors.black87,
+                    color: message.user.color != null ? message.user.color : isUser ? Colors.white70 : Colors.black87,
                   ),
                 ),
               )
