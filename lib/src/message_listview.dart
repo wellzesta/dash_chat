@@ -31,6 +31,8 @@ class MessageListView extends StatefulWidget {
   final Function onLoadEarlier;
   final Function(bool) defaultLoadCallback;
 
+  Map<DateTime, List<String>> _chatMessagesByDate;
+
   MessageListView({
     this.showLoadEarlierWidget,
     this.shouldShowLoadEarlier,
@@ -61,7 +63,16 @@ class MessageListView extends StatefulWidget {
     this.changeVisible,
     this.visible,
     this.showLoadMore,
-  });
+  }) {
+    _chatMessagesByDate = Map();
+    for (ChatMessage msg in this.messages) {
+      DateTime date = DateTime(msg.createdAt.year, msg.createdAt.year, msg.createdAt.day);
+      if (_chatMessagesByDate[date] == null)
+        _chatMessagesByDate[date] = [msg.id];
+      else
+        _chatMessagesByDate[date].add(msg.id);
+    }
+  }
 
   @override
   _MessageListViewState createState() => _MessageListViewState();
@@ -117,22 +128,17 @@ class _MessageListViewState extends State<MessageListView> {
                   itemBuilder: (context, i) {
 //                    final j = i + 1;
 //                    bool showAvatar = false;
-                    bool showDate;
+                    bool showDate = false;
 //                    if (j < widget.messages.length) {
 //                      showAvatar = widget.messages[j].user.uid != widget.messages[i].user.uid;
 //                    } else {
 //                      showAvatar = true;
 //                    }
 
-                    if (currentDate == null) {
-                      currentDate = widget.messages[i].createdAt;
-                      showDate = true;
-                    } else if (currentDate.difference(widget.messages[i].createdAt).inDays != 0) {
-                      showDate = true;
-                      currentDate = widget.messages[i].createdAt;
-                    } else {
-                      showDate = false;
-                    }
+                    var ids = widget._chatMessagesByDate[DateTime(widget.messages[i].createdAt.year,
+                            widget.messages[i].createdAt.year, widget.messages[i].createdAt.day)] ??
+                        [];
+                    if ((ids.first ?? '') == widget.messages[i].id) showDate = true;
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -144,7 +150,8 @@ class _MessageListViewState extends State<MessageListView> {
                                 : DateFormat('yyyy-MM-dd').format(widget.messages[i].createdAt))
                           else
                             Container(
-                              decoration: BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.circular(10.0)),
+                              decoration: BoxDecoration(
+                                  color: Colors.grey, borderRadius: BorderRadius.circular(10.0)),
                               padding: EdgeInsets.only(
                                 bottom: 5.0,
                                 top: 5.0,
