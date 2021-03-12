@@ -1,37 +1,37 @@
 part of dash_chat;
 
 class MessageListView extends StatefulWidget {
-  final List<ChatMessage> messages;
-  final ChatUser user;
-  final bool showuserAvatar;
-  final DateFormat dateFormat;
-  final DateFormat timeFormat;
-  final bool showAvatarForEverMessage;
-  final Function(ChatUser) onPressAvatar;
-  final Function(ChatUser) onLongPressAvatar;
-  final bool renderAvatarOnTop;
-  final Function(ChatMessage, BuildContext) onLongPressMessage;
-  final bool inverted;
-  final Widget Function(ChatUser) avatarBuilder;
-  final Widget Function(ChatMessage) messageBuilder;
-  final Widget Function(String) messageTextBuilder;
-  final Widget Function(String url) messageImageBuilder;
-  final Widget Function(String) messageTimeBuilder;
-  final Widget Function(String) dateBuilder;
-  final Widget Function() renderMessageFooter;
-  final BoxDecoration messageContainerDecoration;
+  final List<ChatMessage>? messages;
+  final ChatUser? user;
+  final bool? showuserAvatar;
+  final DateFormat? dateFormat;
+  final DateFormat? timeFormat;
+  final bool? showAvatarForEverMessage;
+  final Function(ChatUser)? onPressAvatar;
+  final Function(ChatUser)? onLongPressAvatar;
+  final bool? renderAvatarOnTop;
+  final Function(ChatMessage, BuildContext)? onLongPressMessage;
+  final bool? inverted;
+  final Widget Function(ChatUser)? avatarBuilder;
+  final Widget Function(ChatMessage)? messageBuilder;
+  final Widget Function(String)? messageTextBuilder;
+  final Widget Function(String url)? messageImageBuilder;
+  final Widget Function(String)? messageTimeBuilder;
+  final Widget Function(String)? dateBuilder;
+  final Widget Function()? renderMessageFooter;
+  final BoxDecoration? messageContainerDecoration;
   final List<MatchText> parsePatterns;
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
   final EdgeInsets messageContainerPadding;
-  final Function changeVisible;
-  final bool visible;
-  final bool showLoadMore;
-  final bool shouldShowLoadEarlier;
-  final Widget Function() showLoadEarlierWidget;
-  final Function onLoadEarlier;
-  final Function(bool) defaultLoadCallback;
+  final Function? changeVisible;
+  final bool? visible;
+  final bool? showLoadMore;
+  final bool? shouldShowLoadEarlier;
+  final Widget Function()? showLoadEarlierWidget;
+  final Function? onLoadEarlier;
+  final Function(bool)? defaultLoadCallback;
 
-  Map<DateTime, List<String>> _chatMessagesByDate;
+  late Map<DateTime, List<String?>> _chatMessagesByDate;
 
   MessageListView({
     this.showLoadEarlierWidget,
@@ -65,12 +65,12 @@ class MessageListView extends StatefulWidget {
     this.showLoadMore,
   }) {
     _chatMessagesByDate = Map();
-    for (ChatMessage msg in this.messages) {
-      DateTime date = DateTime(msg.createdAt.year, msg.createdAt.year, msg.createdAt.day);
+    for (ChatMessage msg in this.messages!) {
+      DateTime date = DateTime(msg.createdAt!.year, msg.createdAt!.year, msg.createdAt!.day);
       if (_chatMessagesByDate[date] == null)
         _chatMessagesByDate[date] = [msg.id];
       else
-        _chatMessagesByDate[date].add(msg.id);
+        _chatMessagesByDate[date]!.add(msg.id);
     }
   }
 
@@ -87,13 +87,13 @@ class _MessageListViewState extends State<MessageListView> {
     }
 
     if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent) {
-      if (widget.visible) {
-        widget.changeVisible(false);
+      if (widget.visible!) {
+        widget.changeVisible!(false);
       }
     } else {
       if (previousPixelPostion < scrollNotification.metrics.pixels) {
-        if (!widget.visible) {
-          widget.changeVisible(true);
+        if (!widget.visible!) {
+          widget.changeVisible!(true);
         }
       }
 
@@ -123,8 +123,8 @@ class _MessageListViewState extends State<MessageListView> {
                   shrinkWrap: true,
                   //padding: EdgeInsets.only(bottom: 20),
                   padding: EdgeInsets.only(bottom: 10),
-                  reverse: widget.inverted,
-                  itemCount: widget.messages.length,
+                  reverse: widget.inverted!,
+                  itemCount: widget.messages!.length,
                   itemBuilder: (context, i) {
 //                    final j = i + 1;
 //                    bool showAvatar = false;
@@ -135,19 +135,19 @@ class _MessageListViewState extends State<MessageListView> {
 //                      showAvatar = true;
 //                    }
 
-                    var ids = widget._chatMessagesByDate[DateTime(widget.messages[i].createdAt.year,
-                            widget.messages[i].createdAt.year, widget.messages[i].createdAt.day)] ??
+                    var ids = widget._chatMessagesByDate[DateTime(widget.messages![i].createdAt!.year,
+                            widget.messages![i].createdAt!.year, widget.messages![i].createdAt!.day)] ??
                         [];
-                    if ((ids.first ?? '') == widget.messages[i].id) showDate = true;
+                    if ((ids.first ?? '') == widget.messages![i].id) showDate = true;
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         if (showDate)
                           if (widget.dateBuilder != null)
-                            widget.dateBuilder(widget.dateBuilder != null
-                                ? widget.dateFormat.format(widget.messages[i].createdAt)
-                                : DateFormat('yyyy-MM-dd').format(widget.messages[i].createdAt))
+                            widget.dateBuilder!(widget.dateBuilder != null
+                                ? widget.dateFormat!.format(widget.messages![i].createdAt!)
+                                : DateFormat('yyyy-MM-dd').format(widget.messages![i].createdAt!))
                           else
                             Container(
                               decoration: BoxDecoration(
@@ -161,8 +161,8 @@ class _MessageListViewState extends State<MessageListView> {
                               margin: EdgeInsets.symmetric(vertical: 10.0),
                               child: Text(
                                 widget.dateBuilder != null
-                                    ? widget.dateFormat.format(widget.messages[i].createdAt)
-                                    : DateFormat('MMM dd').format(widget.messages[i].createdAt),
+                                    ? widget.dateFormat!.format(widget.messages![i].createdAt!)
+                                    : DateFormat('MMM dd').format(widget.messages![i].createdAt!),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 12.0,
@@ -173,7 +173,7 @@ class _MessageListViewState extends State<MessageListView> {
                           onLongPress: () {
                             if (widget.onLongPressMessage == null) return;
 
-                            widget.onLongPressMessage(widget.messages[i], context);
+                            widget.onLongPressMessage!(widget.messages![i], context);
 //                            if (widget.onLongPressMessage != null) {
 //                              widget.onLongPressMessage(widget.messages[i]);
 //                            } else {
@@ -209,10 +209,10 @@ class _MessageListViewState extends State<MessageListView> {
                             // }
                           },
                           child: widget.messageBuilder != null
-                              ? widget.messageBuilder(widget.messages[i])
+                              ? widget.messageBuilder!(widget.messages![i])
                               : MessageContainer(
-                                  isUser: widget.messages[i].user.uid == widget.user.uid,
-                                  message: widget.messages[i],
+                                  isUser: widget.messages![i].user!.uid == widget.user!.uid,
+                                  message: widget.messages![i],
                                   timeFormat: widget.timeFormat,
                                   messageImageBuilder: widget.messageImageBuilder,
                                   messageTextBuilder: widget.messageTextBuilder,

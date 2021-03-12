@@ -1,33 +1,33 @@
 part of dash_chat;
 
 class ChatInputToolbar extends StatelessWidget {
-  final TextEditingController controller;
-  final TextStyle inputTextStyle;
-  final InputDecoration inputDecoration;
-  final BoxDecoration inputContainerStyle;
+  final TextEditingController? controller;
+  final TextStyle? inputTextStyle;
+  final InputDecoration? inputDecoration;
+  final BoxDecoration? inputContainerStyle;
   final List<Widget> leading;
   final List<Widget> trailling;
   final int inputMaxLines;
-  final int maxInputLength;
+  final int? maxInputLength;
   final bool alwaysShowSend;
   final ChatUser user;
-  final Function(ChatMessage) onSend;
-  final String text;
-  final Function(String) onTextChange;
-  final String Function() messageIdGenerator;
-  final Widget Function(Function) sendButtonBuilder;
-  final Widget Function() inputFooterBuilder;
+  final Function(ChatMessage)? onSend;
+  final String? text;
+  final Function(String)? onTextChange;
+  final String Function()? messageIdGenerator;
+  final Widget Function(Function)? sendButtonBuilder;
+  final Widget Function()? inputFooterBuilder;
   final bool showInputCursor;
   final double inputCursorWidth;
-  final Color inputCursorColor;
-  final ScrollController scrollController;
+  final Color? inputCursorColor;
+  final ScrollController? scrollController;
   final bool showTraillingBeforeSend;
-  final FocusNode focusNode;
+  final FocusNode? focusNode;
   final EdgeInsets inputToolbarPadding;
   final EdgeInsets inputToolbarMargin;
 
   ChatInputToolbar({
-    Key key,
+    Key? key,
     this.focusNode,
     this.scrollController,
     this.text,
@@ -44,7 +44,7 @@ class ChatInputToolbar extends StatelessWidget {
     this.inputCursorWidth = 2.0,
     this.inputCursorColor,
     this.onSend,
-    @required this.user,
+    required this.user,
     this.alwaysShowSend = false,
     this.messageIdGenerator,
     this.inputFooterBuilder,
@@ -91,16 +91,16 @@ class ChatInputToolbar extends StatelessWidget {
                               child: TextField(
                                 focusNode: focusNode,
                                 onChanged: (value) {
-                                  onTextChange(value);
-                                  SchedulerBinding.instance.addPostFrameCallback((_) {
-                                    scrollController.jumpTo(scrollController.position.maxScrollExtent - 10);
+                                  onTextChange!(value);
+                                  SchedulerBinding.instance!.addPostFrameCallback((_) {
+                                    scrollController!.jumpTo(scrollController!.position.maxScrollExtent - 10);
                                   });
                                 },
                                 buildCounter: (
                                   BuildContext context, {
-                                  int currentLength,
-                                  int maxLength,
-                                  bool isFocused,
+                                  int? currentLength,
+                                  int? maxLength,
+                                  bool? isFocused,
                                 }) =>
                                     null,
                                 decoration: inputDecoration != null
@@ -142,11 +142,11 @@ class ChatInputToolbar extends StatelessWidget {
                       ),
                     ),
                     if (showTraillingBeforeSend) ...trailling,
-                    sendButtonBuilder(() async {
-                      if (controller.text != '') await onSend(message);
+                    sendButtonBuilder!(() async {
+                      if (controller!.text != '') await onSend!(message);
 
                       //focusNode.unfocus();
-                      controller.text = "";
+                      controller!.text = "";
 
 //                      SchedulerBinding.instance.addPostFrameCallback((_) {
 //                        scrollController.animateTo(
@@ -157,8 +157,8 @@ class ChatInputToolbar extends StatelessWidget {
 //                      });
 
                       Timer(Duration(milliseconds: 500), () {
-                        scrollController.animateTo(
-                          scrollController.position.maxScrollExtent - 10,
+                        scrollController!.animateTo(
+                          scrollController!.position.maxScrollExtent - 10,
                           curve: Curves.easeOut,
                           duration: const Duration(milliseconds: 300),
                         );
@@ -169,7 +169,7 @@ class ChatInputToolbar extends StatelessWidget {
                 ),
               ),
             ),
-            if (inputFooterBuilder != null) inputFooterBuilder()
+            if (inputFooterBuilder != null) inputFooterBuilder!()
           ],
         ),
       ),

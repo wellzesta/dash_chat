@@ -1,8 +1,8 @@
 part of dash_chat;
 
 class ScrollToBottom extends StatelessWidget {
-  final Function onScrollToBottomPress;
-  final ScrollController scrollController;
+  final Function? onScrollToBottomPress;
+  final ScrollController? scrollController;
 
   ScrollToBottom({
     this.onScrollToBottomPress,
@@ -25,9 +25,9 @@ class ScrollToBottom extends StatelessWidget {
         ),
         onPressed: () {
           if (onScrollToBottomPress != null) {
-            onScrollToBottomPress();
+            onScrollToBottomPress!();
           } else {
-            scrollController.jumpTo(scrollController.position.maxScrollExtent);
+            scrollController!.jumpTo(scrollController!.position.maxScrollExtent);
           }
         },
       ),

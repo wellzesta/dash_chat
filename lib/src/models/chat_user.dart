@@ -5,23 +5,23 @@ part of dash_chat;
 class ChatUser {
   /// Unique id of the user if no unique is provided a [UUID v4]
   /// is automatically assigned to the chat user.
-  String uid;
+  String? uid;
 
   /// An [optional] parameter to set the user name.
-  String name;
+  String? name;
 
   /// An [optional] parameter to set the user avatar.
-  String avatar;
+  String? avatar;
 
   /// An [optional] parameter to set Text Color
-  Color color;
+  Color? color;
 
   /// An [optional] parameter to set The Message bubble Color
-  Color containerColor;
+  Color? containerColor;
 
-  bool isStaff;
+  bool? isStaff;
 
-  ChatUser({String uid, this.name, this.avatar, this.containerColor, this.color, this.isStaff = false}) {
+  ChatUser({String? uid, this.name, this.avatar, this.containerColor, this.color, this.isStaff = false}) {
     this.uid = uid != null ? uid : Uuid().v4().toString();
   }
 

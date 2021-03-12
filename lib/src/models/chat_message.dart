@@ -8,48 +8,48 @@ class ChatMessage {
   /// and [optional] paramter called [messageIdGenerator].
   /// [messageIdGenerator] take a function with this
   /// signature [String Function()]
-  String id;
+  String? id;
 
   /// Actual text message.
-  String text;
+  String? text;
 
   /// It's a [non-optional] pararmter which specifies the time the
   /// message was delivered takes a [DateTime] object.
-  DateTime createdAt;
+  DateTime? createdAt;
 
-  DateTime originalCreatedAt;
+  DateTime? originalCreatedAt;
   DateTime messageTime = DateTime.now();
 
   /// Takes a [ChatUser] object which is used to distinguish between
   /// users and also provide avaatar URLs and name.
-  ChatUser user;
+  ChatUser? user;
 
   /// A [non-optional] parameter which is used to display images
   /// takes a [Sring] as a url
-  String image;
+  String? image;
 
   /// A [non-optional] parameter which is used to display vedio
   /// takes a [Sring] as a url
-  String vedio;
+  String? vedio;
 
   /// A [non-optional] parameter which is used to show quick replies
   /// to the user
-  QuickReplies quickReplies;
+  QuickReplies? quickReplies;
 
-  bool deleted;
+  bool? deleted;
 
-  bool blocked;
+  bool? blocked;
 
   ChatMessage(
-      {String id,
-      @required this.text,
-      @required this.user,
+      {String? id,
+      required this.text,
+      required this.user,
       this.image,
       this.vedio,
       this.quickReplies,
-      String Function() messageIdGenerator,
-      DateTime createdAt,
-      DateTime originalCreatedAt,
+      String Function()? messageIdGenerator,
+      DateTime? createdAt,
+      DateTime? originalCreatedAt,
       this.deleted = false,
       this.blocked = false}) {
     this.createdAt = createdAt ?? DateTime.now();
@@ -76,9 +76,9 @@ class ChatMessage {
       data['text'] = this.text;
       data['image'] = this.image;
       data['vedio'] = this.vedio;
-      data['createdAt'] = this.createdAt.millisecondsSinceEpoch;
-      data['user'] = user.toJson();
-      data['quickReplies'] = quickReplies.toJson();
+      data['createdAt'] = this.createdAt!.millisecondsSinceEpoch;
+      data['user'] = user!.toJson();
+      data['quickReplies'] = quickReplies!.toJson();
     } catch (e) {
       print('Error: $e');
     }

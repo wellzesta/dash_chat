@@ -11,19 +11,19 @@ class AvatarContainer extends StatelessWidget {
   /// [onPress] function takea a function with this structure
   /// [Function(ChatUser)] will trigger when the avatar
   /// is tapped on
-  final Function(ChatUser) onPress;
+  final Function(ChatUser)? onPress;
 
   /// [onLongPress] function takea a function with this structure
   /// [Function(ChatUser)] will trigger when the avatar
   /// is long pressed
-  final Function(ChatUser) onLongPress;
+  final Function(ChatUser)? onLongPress;
 
   /// [avatarBuilder] function takea a function with this structure
   /// [Widget Function(ChatUser)] to build the avatar
-  final Widget Function(ChatUser) avatarBuilder;
+  final Widget Function(ChatUser)? avatarBuilder;
 
   const AvatarContainer({
-    @required this.user,
+    required this.user,
     this.onPress,
     this.onLongPress,
     this.avatarBuilder,
@@ -32,10 +32,10 @@ class AvatarContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => onPress(user),
-      onLongPress: () => onLongPress(user),
+      onTap: () => onPress!(user),
+      onLongPress: () => onLongPress!(user),
       child: avatarBuilder != null
-          ? avatarBuilder(user)
+          ? avatarBuilder!(user)
           : Stack(
               alignment: Alignment.center,
               children: <Widget>[
@@ -44,14 +44,14 @@ class AvatarContainer extends StatelessWidget {
                     height: MediaQuery.of(context).size.width * 0.08,
                     width: MediaQuery.of(context).size.width * 0.08,
                     color: Colors.grey,
-                    child: Center(child: Text(user.name[0])),
+                    child: Center(child: Text(user.name![0])),
                   ),
                 ),
-                user.avatar != null && user.avatar.length != 0
+                user.avatar != null && user.avatar!.length != 0
                     ? Center(
                         child: ClipOval(
                           child: FadeInImage.memoryNetwork(
-                            image: user.avatar,
+                            image: user.avatar!,
                             placeholder: kTransparentImage,
                             fit: BoxFit.contain,
                             height: MediaQuery.of(context).size.width * 0.08,
